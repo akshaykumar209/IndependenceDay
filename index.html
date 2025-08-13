@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Freedom Stories — Interactive Journey</title>
+  <style>
+    :root {
+      --bg1: #fff8ef;
+      --bg2: #ecf6ff;
+      --accent: #0b4bd6;
+      --accent2: #ff5ea1;
+      --muted: #444;
+      --card: #fff;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Roboto, Arial;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: #111;
+    }
+    
+    header {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .logo {
+      font-weight: 900;
+      color: var(--accent);
+      font-size: 20px;
+    }
+    
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    a {
+      text-decoration: none;
+    }
+    
+    nav button,
+    a {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    nav button:hover {
+      background: #0940b3;
+    }
+    
+    section {
+      display: none;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    section.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(120deg, #e3f2fd, #fff);
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .hero h1 {
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    
+    .hero p {
+      color: var(--muted);
+      max-width: 600px;
+      margin: auto;
+    }
+    
+    .btn {
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .btn:hover {
+      background: #e64f92;
+    }
+    
+    /* Card */
+    .card {
+      background: var(--card);
+      padding: 14px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 15px;
+    }
+    
+    /* === Timeline specific styles (paste into your main <style>) === */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    
+    .timeline .event {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      border-left: 4px solid var(--accent);
+      cursor: pointer;
+      transition: transform .12s, box-shadow .12s;
+    }
+    
+    .timeline .event:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(11, 61, 145, 0.06);
+    }
+    
+    .timeline .event .year {
+      min-width: 76px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    
+    .timeline .event .content .title {
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    
+    .timeline .event .content .short {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: modalFade 0.3s ease-in-out;
+    }
+    
+    .modal-close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+    }
+    
+    .modal-close:hover {
+      color: #000;
+    }
+    
+    /* Story Game Styles */
+    #storyContainer {
+      margin-top: 15px;
+    }
+    
+    .story-choice {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .story-choice:hover {
+      background: #093a9c;
+    }
+    
+    /* Matching Game Styles */
+    .match-columns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    
+    .match-column {
+      width: 48%;
+    }
+    
+    .match-item {
+      background: #f8f8f8;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 6px 0;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: background 0.2s, border 0.2s;
+    }
+    
+    .match-item.selected {
+      border: 2px solid var(--accent);
+      background: #e6f0ff;
+    }
+    
+    .match-item.correct {
+      border: 2px solid green;
+      background: #e7ffe7;
+    }
+    
+    .match-item.wrong {
+      border: 2px solid red;
+      background: #ffe7e7;
+    }
+    
+    #checkBtn,
+    #restartBtn {
+      background: linear-gradient(90deg, var(--accent), #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(11, 75, 214, 0.08)
+    }
+    
+    @keyframes modalFade {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav {
+        justify-content: center;
+      }
+      
+      .hero h1 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    /* ---------- About Section ---------- */
+    .about-wrap {
+      padding: 24px;
+    }
+    
+    .about-card {
+      max-width: 1100px;
+      margin: auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      overflow: hidden;
+    }
+    
+    /* Left column */
+    .about-left {
+      background: linear-gradient(180deg, var(--bg1, #fff8ef), var(--bg2, #ecf6ff));
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      justify-content: flex-start;
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    
+    .avatar-ring {
+      width: 160px;
+      height: 160px;
+      margin: 10px auto 2px;
+      border-radius: 50%;
+      padding: 6px;
+      background: conic-gradient(from 90deg, #0b4bd6, #ff8a00, #0b4bd6);
+      display: grid;
+      place-items: center;
+    }
+    
+    .avatar-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+      background: #fff;
+      padding: 6px;
+    }
+    
+    .about-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .chip {
+      font-size: 12px;
+      padding: 6px 10px;
+      background: #eef5ff;
+      color: #0b4bd6;
+      border: 1px solid rgba(11, 75, 214, 0.15);
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    
+    .about-highlight {
+      background: #ffffffcc;
+      border: 1px dashed rgba(0, 0, 0, 0.1);
+      padding: 14px;
+      border-radius: 10px;
+      color: #333;
+    }
+    
+    .about-highlight h3 {
+      margin: 0 0 6px;
+      color: var(--accent, #0b4bd6);
+    }
+    
+    /* Right column */
+    .about-right {
+      padding: 24px;
+    }
+    
+    .about-title {
+      margin: 6px 0 14px;
+      color: var(--accent, #0b4bd6);
+      font-size: 26px;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    
+    .info-card {
+      background: #fafcff;
+      border: 1px solid rgba(11, 75, 214, 0.12);
+      border-radius: 12px;
+      padding: 14px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    
+    .info-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(11, 75, 214, 0.08);
+    }
+    
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #0b4bd6;
+    }
+    
+    .list-clean {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .list-clean li {
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+    }
+    
+    .list-clean li:last-child {
+      border-bottom: none;
+    }
+    
+    .list-clean b {
+      color: #222;
+    }
+    
+    /* Optional contact buttons */
+    .contact-card {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      background: var(--accent, #0b4bd6);
+      color: #fff;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .btn:hover {
+      background: #0940b3;
+    }
+    
+    .btn-ghost {
+      background: #eef3ff;
+      color: #0b4bd6;
+      border: 1px solid rgba(11, 75, 214, 0.2);
+    }
+    
+    .btn-ghost:hover {
+      background: #dfe9ff;
+    }
+    
+    /* ---------- Responsive ---------- */
+    @media (max-width: 980px) {
+      .about-card {
+        grid-template-columns: 1fr;
+      }
+      
+      .about-left {
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .about-title {
+        text-align: center;
+      }
+    }
+    
+    @media (max-width: 520px) {
+      .avatar-ring {
+        width: 130px;
+        height: 130px;
+      }
+      
+      .about-title {
+        font-size: 22px;
+      }
+      
+      .chip {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  
+  <header>
+    <div class="logo" style="margin:10px;">🇮🇳 Storytelling Through Coding</div>
+    <nav>
+      <button onclick="showSection('home')">Home</button>
+      <button onclick="showSection('timeline')">Timeline</button>
+      <button onclick="showSection('story')">Story Game</button>
+      <button onclick="showSection('match'); startMatchingGame()">Matching Game</button>
+      <button onclick="showSection('fighters')">Fighters</button>
+      <a href="/storyTelling/freedomQuiz.html">Quiz</a>
+      
+      
+      
+      <button onclick="showSection('about')">About</button>
+    </nav>
+  </header>
+  
+  <!-- Home -->
+  <section id="home" class="active">
+    <div class="hero">
+      <h1>भारत की आज़ादी की यात्रा</h1>
+      <p>जानिए कैसे भारत ने लंबी लड़ाई, बलिदान और एकता से आज़ादी हासिल की। कहानियां पढ़ें, खेल खेलें और इतिहास को महसूस करें।</p>
+      
+      <h1 style="color: #0b4bd6; font-size: 22px; margin-bottom: 10px;">
+        The Freedom Struggle – भारत का स्वर्णिम अध्याय
+      </h1>
+      <p style="max-width: 700px; margin: auto; font-size: 18px; line-height: 1.6; color: #333;">
+        15 अगस्त 1947 — यह वह दिन था जब हमारे देश ने ब्रिटिश शासन की 200 साल की गुलामी से आज़ादी पाई।
+        लाल क़िले की प्राचीर से पंडित जवाहरलाल नेहरू ने ‘Tryst with Destiny’ भाषण देकर नए भारत के सफ़र की शुरुआत की।
+        यह दिन केवल एक तारीख़ नहीं, बल्कि करोड़ों भारतीयों के बलिदान, संघर्ष और सपनों की जीत का प्रतीक है।
+      </p>
+      <p style="max-width: 700px; margin: 15px auto; font-size: 18px; line-height: 1.6; color: #333;">
+        इस वेबसाइट के माध्यम से आप आज़ादी की लड़ाई की कहानियों, प्रेरणादायक क्रांतिकारियों और ज्ञानवर्धक खेलों के जरिए
+        भारत की गौरवशाली यात्रा को फिर से जी पाएंगे।
+      </p>
+      
+      <button class="btn" onclick="showSection('timeline')">Start Journey</button>
+    </div>
+  </section>
+  
+  <!-- Timeline -->
+  <section id="timeline">
+    <h2>Timeline — Journey to Azadi</h2>
+    
+    <!-- replace the placeholder card in Timeline section with this full card -->
+    <div class="card">
+      <div class="section-title">
+        <h3>Timeline — Journey to Azadi</h3>
+        <div class="muted">12 major events</div>
+      </div>
+      
+      <div id="timelineList" class="timeline">
+        <!-- JavaScript यहाँ event boxes insert करेगा -->
+      </div>
+    </div>
+  </section>
+  <!-- Custom Modal -->
+  <div id="customModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <!-- Story -->
+  <section id="story">
+    <h2>Choose-your-path Story</h2>
+    
+    <div class="card">
+      <h3>Choose Your Path — Freedom Story</h3>
+      <p>स्वतंत्रता आंदोलन की एक कहानी में हिस्सा लें। सही चुनाव करें और देखें कहानी कहाँ ले जाती है!</p>
+      <div id="storyContainer">
+        <p id="storyText">सन 1930 — गांधी जी ने नमक कानून तोड़ने का निर्णय लिया है। क्या आप इस यात्रा में शामिल होंगे?</p>
+        <div id="storyChoices"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Match -->
+  <section id="match">
+    <h2>Match the Fighter</h2>
+    
+    <div class="card">
+      <h3>Freedom Fighters Matching Game</h3>
+      <p>सवाल को सही उत्तर से मिलाइए! पहले सवाल पर क्लिक करें, फिर उसका जवाब चुनें।</p>
+      
+      <div id="matchingGame">
+        <div class="match-columns">
+          <div id="matchLeft" class="match-column"></div>
+          <div id="matchRight" class="match-column"></div>
+        </div>
+        <button id="checkBtn" onclick="checkMatches()">Check Answers</button>
+        <button id="restartBtn" onclick="startMatchingGame()" style="display:none;">Restart Game</button>
+      </div>
+    </div>
+  </section>
+  <section id="fighters">
+    <div class="card">
+      <h2>Freedom Fighters</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        
+        <!-- 1 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://www.adgully.com/img/400/65073_mahatma-gandhi-ji.jpg" alt="Mahatma Gandhi" style="width:100%; border-radius:6px;">
+          <h3>महात्मा गांधी</h3>
+          <p>अहिंसा और सत्याग्रह के माध्यम से आज़ादी की लड़ाई लड़ी।</p>
+        </div>
+        
+        <!-- 2 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/b9/ef/1b/b9ef1b5502fa92533037a3b67b4fc4e1.jpg" alt="Bhagat Singh" style="width:100%; border-radius:6px;">
+          <h3>भगत सिंह</h3>
+          <p>क्रांतिकारी स्वतंत्रता सेनानी जिन्होंने ब्रिटिश हुकूमत के खिलाफ लड़ाई लड़ी।</p>
+        </div>
+        
+        <!-- 3 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/7c/08/11/7c081195f508b6daffe986a3273776d3.jpg" alt="Subhas Chandra Bose" style="width:100%; border-radius:6px;">
+          <h3>सुभाष चंद्र बोस</h3>
+          <p>आज़ाद हिंद फ़ौज के संस्थापक और साहसी नेता।</p>
+        </div>
+        
+        <!-- 4 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/23/c1/46/23c146f1a587358e355c0e793fe0295f.jpg" alt="Rani Lakshmibai" style="width:100%; border-radius:6px;">
+          <h3>रानी लक्ष्मीबाई</h3>
+          <p>1857 के पहले स्वतंत्रता संग्राम की वीरांगना।</p>
+        </div>
+        
+        <!-- 5 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/a2/b5/11/a2b51191e500049b097963a95e7d1ba7.jpg" alt="Rajguru" style="width:100%; border-radius:6px;">
+          <h3>राजगुरु</h3>
+          <p>HSRA के वीर स्वतंत्रता सेनानी।</p>
+        </div>
+        
+        <!-- 6 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/92/89/b3/9289b39df38aeafdc2cba19f28c9eb3c.jpg" alt="Sukhdev" style="width:100%; border-radius:6px;">
+          <h3>सुखदेव</h3>
+          <p>भगत सिंह और राजगुरु के साथी क्रांतिकारी।</p>
+        </div>
+        
+        <!-- 7 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/c3/c0/4b/c3c04ba11b107aa125cb03ce3de755c5.jpg" alt="Chandrashekhar Azad" style="width:100%; border-radius:6px;">
+          <h3>चंद्रशेखर आज़ाद</h3>
+          <p>आज़ाद नाम से प्रसिद्ध बहादुर सेनानी।</p>
+        </div>
+        
+        <!-- 8 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/90/a3/9d/90a39d5ad693b40d40a7dc253ad47077.jpg" alt="Lala Lajpat Rai" style="width:100%; border-radius:6px;">
+          <h3>लाला लाजपत राय</h3>
+          <p>पंजाब केसरी, लाठीचार्ज में घायल होकर शहीद।</p>
+        </div>
+        
+        <!-- 9 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/79/5e/98/795e982386b6d53eb966ad477998bd50.jpg" alt="Bal Gangadhar Tilak" style="width:100%; border-radius:6px;">
+          <h3>बाल गंगाधर तिलक</h3>
+          <p>“स्वराज मेरा जन्मसिद्ध अधिकार” का नारा दिया।</p>
+        </div>
+        
+        <!-- 10 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/4f/2c/c0/4f2cc0fbf609444dcf7ebfc94e6d8817.jpg" alt="Sarojini Naidu" style="width:100%; border-radius:6px;">
+          <h3>सरोजिनी नायडू</h3>
+          <p>भारत कोकिला, स्वतंत्रता संग्राम की नेता।</p>
+        </div>
+        
+        
+        
+        
+        <!-- 12 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/ee/e8/21/eee82163575dd81736a4bfcbff16637d.jpg" alt="Udham Singh" style="width:100%; border-radius:6px;">
+          <h3>उधम सिंह</h3>
+          <p>जलियांवाला बाग कांड का बदला लिया।</p>
+        </div>
+        
+        <!-- 13 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/9e/90/c0/9e90c0a138f0ef27258989436ee2698a.jpg" alt="Mangal Pandey" style="width:100%; border-radius:6px;">
+          <h3>मंगल पांडे</h3>
+          <p>1857 की क्रांति के अग्रदूत।</p>
+        </div>
+        
+        <!-- 14 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/e3/d5/dc/e3d5dc696f9bc679e09e415b22149950.jpg" alt="Begum Hazrat Mahal" style="width:100%; border-radius:6px;">
+          <h3>बेगम हज़रत महल</h3>
+          <p>1857 के विद्रोह की प्रमुख नेता।</p>
+        </div>
+        
+        
+        
+        <!-- 16 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/8b/e2/05/8be205b77e1de5dc299b5639368ae418.jpg" alt="Ram Prasad Bismil" style="width:100%; border-radius:6px;">
+          <h3>राम प्रसाद बिस्मिल</h3>
+          <p>क्रांतिकारी कवि और स्वतंत्रता सेनानी।</p>
+        </div>
+        
+        
+        
+        <!-- 18 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/84/62/61/846261e89b7f4d601ab174474dbeaa18.jpg" alt="Bipin Chandra Pal" style="width:100%; border-radius:6px;">
+          <h3>बिपिन चंद्र पाल</h3>
+          <p>लाल-बाल-पाल त्रयी के सदस्य।</p>
+        </div>
+        
+        <!-- 19 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/10/3b/5d/103b5df5556fea31a4c61b4d4f71b2e1.jpg" alt="Jawaharlal Nehru" style="width:100%; border-radius:6px;">
+          <h3>जवाहरलाल नेहरू</h3>
+          <p>स्वतंत्र भारत के प्रथम प्रधानमंत्री।</p>
+        </div>
+        
+        <!-- 20 -->
+        <div style="background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <img src="https://i.pinimg.com/736x/8b/cd/51/8bcd511d8fcef6856ac2946c7e3f00ec.jpg" alt="Sardar Patel" style="width:100%; border-radius:6px;">
+          <h3>सरदार वल्लभभाई पटेल</h3>
+          <p>भारत के लौह पुरुष और एकीकरण के शिल्पी।</p>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+  
+  <!-- About Me -->
+  <section id="about" class="about-wrap">
+    <div class="about-card">
+      <div class="about-left">
+        
+        
+        
+        
+        <div class="about-highlight">
+          <h3>Quick Intro</h3>
+          <p>
+            Hi, I’m <b>Akshay Kumar</b> from Muzaffarnagar.
+            I love building clean, interactive web pages and sharing India’s freedom stories through code.
+          </p>
+        </div>
+      </div>
+      
+      <div class="about-right">
+        <h2 class="about-title">About Akshay</h2>
+        
+        <div class="info-grid">
+          <!-- Personal Info -->
+          <div class="info-card">
+            <h3>1. Personal Details</h3>
+            <ul class="list-clean">
+              <li><b>Name:</b> Akshay Kumar</li>
+              <li><b>Education:</b> 11th Grade, S.D. Inter College<br><small>(City: Muzaffarnagar)</small></li>
+            </ul>
+          </div>
+          
+          <!-- Family -->
+          <div class="info-card">
+            <h3>2. Family Information</h3>
+            <ul class="list-clean">
+              <li><b>Mother's Name:</b> Mrs. Sushma</li>
+              <li><b>Father's Name:</b> Mr. Dheeraj</li>
+              <li><b>Siblings:</b> I have two sisters</li>
+            </ul>
+          </div>
+          
+          <!-- Coding Journey -->
+          <div class="info-card">
+            <h3>3. My Coding Journey</h3>
+            <ul class="list-clean">
+              <li><b>Who introduced me to coding?</b> My school</li>
+              <li><b>When did I start?</b> During my web development studies</li>
+              <li><b>First things I learned:</b> HTML, CSS, JavaScript</li>
+            </ul>
+          </div>
+          
+          <!-- CodeYogi -->
+          <div class="info-card">
+            <h3>4. Experience with CodeYogi</h3>
+            <ul class="list-clean">
+              <li><b>Joined:</b> 2 August 2024</li>
+              <li><b>What I learned:</b> HTML, CSS, JavaScript</li>
+            </ul>
+          </div>
+          <div class="about-badges">
+            <span class="chip">Student • 12th Grade</span>
+            <span class="chip">Web Dev Learner</span>
+            <span class="chip">CodeYogi 2025</span>
+          </div>
+        </div>
+        
+       
+      </div>
+    </div>
+  </section>
+  
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    
+    function openModal(title, bodyHTML) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalBody').innerHTML = bodyHTML;
+      document.getElementById('customModal').style.display = 'flex';
+    }
+    
+    function closeModal(e) {
+      // अगर बाहर click हुआ या close बटन click हुआ
+      if (!e || e.target.id === 'customModal' || e.target.classList.contains('modal-close')) {
+        document.getElementById('customModal').style.display = 'none';
+      }
+    }
+   
+    const timelineEvents = [
+      { id: 'e1', year: '1757', title: 'Battle of Plassey', short: 'British East India Company की बढ़ती ताकत', detail: '1757 में Plassey की लड़ाई ने British को Bengal में राजनीतिक व आर्थिक control दिया, जो बाद में British rule की नींव बना।' },
+      { id: 'e2', year: '1857', title: 'First War of Independence (1857)', short: 'Sepoy Rebellion और लोक विद्रोह', detail: '1857 का विद्रोह — सैनिकों और आम जनता का विरोध। कई स्थानों पर अंग्रेजों के खिलाफ़ बड़ा संघर्ष हुआ।' },
+      { id: 'e3', year: '1877', title: 'Queen Victoria proclaimed Empress of India', short: 'British Crown की प्रत्यक्ष शासकीय स्थिति', detail: '1877 में Queen Victoria को Empress of India घोषित किया गया — ब्रिटिश शासन का प्रतीक।' },
+      { id: 'e4', year: '1885', title: 'Indian National Congress founded', short: 'Political organization की शुरुआत', detail: '1885 में INC की स्थापना हुई, जिसने बाद में स्वतंत्रता आंदोलन का नेतृत्व किया।' },
+      { id: 'e5', year: '1905', title: 'Partition of Bengal', short: 'विभाजन और स्वदेशी आंदोलन की शुरुआत', detail: '1905 का Bengal विभाजन लोगों में रोष पैदा कर रहा था — Swadeshi movement ने जन्म लिया।' },
+      { id: 'e6', year: '1915', title: 'Return of Gandhi to India', short: 'Gandhi जी का भारत आगमन', detail: '1915 में गांधी जी दक्षिण अफ्रीका से लौटे और स्वतंत्रता आंदोलन में सक्रिय हुए।' },
+      { id: 'e7', year: '1919', title: 'Jallianwala Bagh Massacre', short: 'Amritsar में निर्दोषों पर गोलीबारी', detail: '13 April 1919 — General Dyer ने भीड़ पर फायर किया; देश में रोष और एकता बढ़ी।' },
+      { id: 'e8', year: '1920-22', title: 'Non-Cooperation Movement', short: 'Mass civil disobedience', detail: 'Gandhi जी ने non-cooperation का आह्वान किया — schools, courts का बहिष्कार और स्वदेशी का समर्थन।' },
+      { id: 'e9', year: '1923', title: 'Swaraj Party Formation', short: 'अंदर से बदलाव की रणनीति', detail: 'Motilal Nehru और C.R. Das ने स्वराज पार्टी बनाई ताकि British councils में सुधार लाए जा सकें।' },
+      { id: 'e10', year: '1930', title: 'Dandi Salt March', short: 'Salt Satyagraha led by Gandhi', detail: 'Gandhi जी की 240-mile यात्रा — नमक कानून के खिलाफ़ प्रसिद्ध अवज्ञा आंदोलन।' },
+      { id: 'e11', year: '1931', title: 'Execution of Bhagat Singh, Rajguru, Sukhdev', short: 'क्रांतिकारियों की शहादत', detail: '23 मार्च 1931 को इन तीनों को फांसी दी गई — स्वतंत्रता संग्राम में जोश और बढ़ा।' },
+      { id: 'e12', year: '1935', title: 'Government of India Act 1935', short: 'Constitutional reforms का प्रस्ताव', detail: '1935 Act ने provincial autonomy दी पर अंग्रेज़ी नियंत्रण बना रहा।' },
+      { id: 'e13', year: '1940', title: 'Lahore Resolution', short: 'पाकिस्तान की मांग', detail: 'Muslim League ने अलग देश की मांग की, जो बाद में विभाजन का कारण बनी।' },
+      { id: 'e14', year: '1942', title: 'Quit India Movement', short: '“Do or Die” का आह्वान', detail: 'August 1942 में Congress ने जनता से अंग्रेज़ों को देश छोड़ने के लिए कहा — व्यापक गिरफ्तारियाँ और विरोध हुए।' },
+      { id: 'e15', year: '1943', title: 'Subhas Bose takes charge of INA', short: 'आज़ाद हिंद फ़ौज का नेतृत्व', detail: 'Subhas Chandra Bose ने INA का नेतृत्व किया और ब्रिटिश शासन के खिलाफ़ लड़ाई जारी रखी।' },
+      { id: 'e16', year: '1944-45', title: 'INA Trials & Nationalist Surge', short: 'INA leaders trials और जन समर्थन', detail: 'INA trials ने जनता में देशभक्ति और आक्रोश दोनों को बढ़ाया।' },
+      { id: 'e17', year: '1946', title: 'Naval Mutiny', short: 'सेना और जनता का विद्रोह', detail: '1946 में नौसेना के सैनिकों ने ब्रिटिश शासन के खिलाफ़ विद्रोह किया, जिसने स्वतंत्रता की मांग को तेज किया।' },
+      { id: 'e18', year: '1946', title: 'Interim Government Formation', short: 'स्वतंत्रता की ओर कदम', detail: '1946 में नेहरू के नेतृत्व में अंतरिम सरकार बनी।' },
+      { id: 'e19', year: '1947', title: 'India Gains Independence', short: 'Azadi — 15 August 1947', detail: 'लंबे संघर्ष के बाद भारत आज़ाद हुआ, लेकिन विभाजन का दर्द भी साथ आया।' },
+      { id: 'e20', year: '1950', title: 'India becomes a Republic', short: 'संविधान लागू', detail: '26 जनवरी 1950 को भारत का संविधान लागू हुआ और भारत गणराज्य बना।' }
+    ];
+    
+    function renderTimeline() {
+      const list = document.getElementById('timelineList');
+      if (!list) return;
+      list.innerHTML = ''; // clear
+      timelineEvents.forEach(ev => {
+        const box = document.createElement('div');
+        box.className = 'event';
+        box.tabIndex = 0;
+        box.innerHTML = `
+      <div class="year">${ev.year}</div>
+      <div class="content">
+        <div class="title">${ev.title}</div>
+        <div class="short">${ev.short}</div>
+      </div>
+    `;
+        box.addEventListener('click', () => {
+        
+          if (typeof openModal === 'function') {
+            openModal(`${ev.title} — ${ev.year}`, `<p>${ev.detail}</p>`);
+          } else {
+            // fallback: simple alert
+            alert(ev.title + " (" + ev.year + ")\\n\\n" + ev.detail);
+          }
+        });
+        // accessibility: Enter opens
+        box.addEventListener('keydown', (e) => { if (e.key === 'Enter') box.click(); });
+        list.appendChild(box);
+      });
+    }
+    
+    // call render on DOM ready (if you already call renderTimeline elsewhere, it's fine)
+    document.addEventListener('DOMContentLoaded', renderTimeline);
+    
+    /* === Story Game Data & Logic === */
+    const storyData = {
+      start: {
+        text: "सन 1930 — गांधी जी ने नमक कानून तोड़ने का निर्णय लिया है। क्या आप इस यात्रा में शामिल होंगे या किसी और रास्ते पर जाएंगे?",
+        choices: [
+          { text: "गांधी जी के साथ यात्रा", next: "joinMarch" },
+          { text: "घर पर रहूँगा", next: "stayHome" },
+          { text: "सुभाष बोस के साथ INA जॉइन", next: "joinINA" }
+        ]
+      },
+      joinMarch: {
+        text: "आप गांधी जी और साथियों के साथ डांडी की ओर निकलते हैं। पुलिस रास्ता रोकती है। आप क्या करेंगे?",
+        choices: [
+          { text: "शांतिपूर्वक विरोध", next: "peacefulProtest" },
+          { text: "जोरदार नारे लगाएँ", next: "shoutSlogans" }
+        ]
+      },
+      stayHome: {
+        text: "आप घर पर रहते हैं, लेकिन आंदोलन की खबरें सुनते हैं। आपको पछतावा होता है कि आपने हिस्सा नहीं लिया।",
+        choices: []
+      },
+      peacefulProtest: {
+        text: "पुलिस आपको गिरफ्तार कर लेती है, लेकिन आपका शांतिपूर्ण विरोध पूरी दुनिया में सुर्खियों में आता है। आप स्वतंत्रता संग्राम के हीरो बनते हैं!",
+        choices: []
+      },
+      shoutSlogans: {
+        text: "आपके नारे लोगों में जोश भरते हैं, लेकिन पुलिस लाठीचार्ज करती है। आप घायल हो जाते हैं लेकिन आपका हौसला अडिग है।",
+        choices: []
+      },
+      joinINA: {
+        text: "आप सुभाष चंद्र बोस के नेतृत्व में आज़ाद हिंद फ़ौज जॉइन करते हैं। आपको प्रशिक्षण के लिए सिंगापुर भेजा जाता है। अगला कदम?",
+        choices: [
+          { text: "बर्मा बॉर्डर की ओर बढ़ें", next: "burmaBorder" },
+          { text: "गुप्त हथियार सप्लाई मिशन", next: "secretMission" }
+        ]
+      },
+      burmaBorder: {
+        text: "INA की टुकड़ी बर्मा बॉर्डर पर अंग्रेजों से भिड़ती है। लड़ाई भयंकर है।",
+        choices: [
+          { text: "लड़ाई जारी रखें", next: "battleWin" },
+          { text: "पीछे हट जाएँ", next: "battleLose" }
+        ]
+      },
+      secretMission: {
+        text: "आपको गुप्त रूप से हथियार सप्लाई करने का मिशन दिया जाता है। रास्ते में भारी बारिश और दुश्मन का खतरा है।",
+        choices: [
+          { text: "तेजी से आगे बढ़ें", next: "missionSuccess" },
+          { text: "छुपकर आगे बढ़ें", next: "missionFail" }
+        ]
+      },
+      battleWin: {
+        text: "आपकी बहादुरी से अंग्रेज पीछे हटते हैं। INA का मनोबल बढ़ जाता है और आप एक युद्ध नायक बनते हैं!",
+        choices: []
+      },
+      battleLose: {
+        text: "INA को पीछे हटना पड़ता है। हालांकि आप जीवित बच जाते हैं, लेकिन हार का दर्द रहता है।",
+        choices: []
+      },
+      missionSuccess: {
+        text: "आप हथियार सुरक्षित रूप से पहुँचा देते हैं, जिससे INA को बड़ी मदद मिलती है!",
+        choices: []
+      },
+      missionFail: {
+        text: "दुश्मन आपको पकड़ लेता है। आप युद्ध बंदी बन जाते हैं, लेकिन आपके बलिदान को लोग याद रखते हैं।",
+        choices: []
+      }
+    };
+    
+    function startStoryGame() {
+      showStoryStep("start");
+    }
+    
+    function showStoryStep(stepKey) {
+      const step = storyData[stepKey];
+      const textElem = document.getElementById("storyText");
+      const choicesElem = document.getElementById("storyChoices");
+      textElem.innerText = step.text;
+      choicesElem.innerHTML = "";
+      step.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "story-choice";
+        btn.innerText = choice.text;
+        btn.onclick = () => showStoryStep(choice.next);
+        choicesElem.appendChild(btn);
+      });
+    }
+    
+    // जब Story section खुले तो गेम शुरू हो
+    document.querySelector('button[onclick="showSection(\'story\')"]').addEventListener('click', startStoryGame);
+    
+    /* === Matching Game Logic === */
+    let matchData = [
+      { question: "महात्मा गांधी", answer: "अहिंसा के पुजारी" },
+      { question: "भगत सिंह", answer: "शहीदे आज़म" },
+      { question: "सुभाष चंद्र बोस", answer: "तुम मुझे खून दो, मैं तुम्हें आज़ादी दूँगा" },
+      { question: "रानी लक्ष्मीबाई", answer: "झाँसी की रानी" }
+    ];
+    
+    let selectedQuestion = null;
+    let matches = {};
+    let shuffledQuestions = [];
+    let shuffledAnswers = [];
+    
+    function startMatchingGame() {
+      document.getElementById("restartBtn").style.display = "none";
+      document.getElementById("checkBtn").style.display = "inline-block";
+      matches = {};
+      selectedQuestion = null;
+      
+      shuffledQuestions = [...matchData].sort(() => Math.random() - 0.5);
+      shuffledAnswers = [...matchData].sort(() => Math.random() - 0.5);
+      
+      const leftCol = document.getElementById("matchLeft");
+      const rightCol = document.getElementById("matchRight");
+      leftCol.innerHTML = "";
+      rightCol.innerHTML = "";
+      
+      shuffledQuestions.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "match-item";
+        div.innerText = item.question;
+        div.onclick = () => selectQuestion(i);
+        leftCol.appendChild(div);
+      });
+      
+      shuffledAnswers.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "match-item";
+        div.innerText = item.answer;
+        div.onclick = () => selectAnswer(i);
+        rightCol.appendChild(div);
+      });
+    }
+    
+    function selectQuestion(index) {
+      document.querySelectorAll("#matchLeft .match-item").forEach(el => el.classList.remove("selected"));
+      document.querySelectorAll("#matchRight .match-item").forEach(el => el.classList.remove("selected"));
+      selectedQuestion = index;
+      document.querySelectorAll("#matchLeft .match-item")[index].classList.add("selected");
+    }
+    
+    function selectAnswer(index) {
+      if (selectedQuestion === null) return;
+      matches[selectedQuestion] = index;
+      document.querySelectorAll("#matchRight .match-item").forEach(el => el.classList.remove("selected"));
+      document.querySelectorAll("#matchRight .match-item")[index].classList.add("selected");
+    }
+    
+    function checkMatches() {
+      let correctCount = 0;
+      
+      document.querySelectorAll("#matchLeft .match-item").forEach((qEl, qIndex) => {
+        const aIndex = matches[qIndex];
+        if (aIndex === undefined) {
+          qEl.classList.add("wrong");
+          return;
+        }
+        const qText = shuffledQuestions[qIndex].question;
+        const aText = shuffledAnswers[aIndex].answer;
+        const realAnswer = matchData.find(item => item.question === qText).answer;
+        
+        if (aText === realAnswer) {
+          qEl.classList.add("correct");
+          document.querySelectorAll("#matchRight .match-item")[aIndex].classList.add("correct");
+          correctCount++;
+        } else {
+          qEl.classList.add("wrong");
+          document.querySelectorAll("#matchRight .match-item")[aIndex].classList.add("wrong");
+          // सही answer highlight
+          let correctIndex = shuffledAnswers.findIndex(item => item.answer === realAnswer);
+          document.querySelectorAll("#matchRight .match-item")[correctIndex].classList.add("correct");
+        }
+      });
+      
+      document.getElementById("checkBtn").style.display = "none";
+      document.getElementById("restartBtn").style.display = "inline-block";
+      
+      openModal("Game Over", `<p>आपने ${correctCount} सही उत्तर दिए।</p>`);
+    }
+    
+    // जब Games section खुले तो गेम शुरू हो
+    document.querySelector('button[onclick="showSection(\'game\')"]').addEventListener('click', startMatchingGame);
+  </script>
+  
+</body>
+
+</html>

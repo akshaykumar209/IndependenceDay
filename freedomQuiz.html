@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freedom Quiz</title>
+  <style>
+    :root {
+      --bg1: #fff8ef;
+      --bg2: #ecf6ff;
+      --accent: #0b4bd6;
+      --accent-dark: #0940b3;
+      --correct: #d4ffd4;
+      --wrong: #ffd4d4;
+    }
+    
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      text-align: center;
+      color: var(--accent);
+    }
+    
+    #quizQuestion {
+      font-size: 18px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .quiz-option {
+      background: #f8f8f8;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    
+    .quiz-option:hover {
+      background: #eef5ff;
+    }
+    
+    .quiz-option.correct {
+      background: var(--correct);
+      border-color: green;
+    }
+    
+    .quiz-option.wrong {
+      background: var(--wrong);
+      border-color: red;
+    }
+    
+    #result {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+      color: var(--accent-dark);
+    }
+    
+    button {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    
+    button:hover {
+      background: var(--accent-dark);
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 22px;
+      }
+      
+      #quizQuestion {
+        font-size: 16px;
+      }
+      
+      .quiz-option {
+        font-size: 14px;
+      }
+    }
+     a{
+      background: #0940b3;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      margin:20px;
+    }
+  </style>
+</head>
+
+<body>
+ <div style="margin:20px;">
+   <a href="/storyTelling/index.html">Back</a>
+   </div>
+  <div class="container">
+    
+    <h1>Freedom Quiz</h1>
+    <div id="quizArea">
+      <p id="quizQuestion"></p>
+      <div id="quizOptions"></div>
+    </div>
+    <div id="result"></div>
+    <button id="restartBtn" onclick="startQuiz()" style="display:none;">Restart Quiz</button>
+  </div>
+  
+  <script>
+    const quizData = [
+      { q: "भारत छोड़ो आंदोलन कब शुरू हुआ?", o: ["1940", "1942", "1945", "1930"], a: "1942" },
+      { q: "महात्मा गांधी का जन्म कहाँ हुआ था?", o: ["पोरबंदर", "सूरत", "राजकोट", "अहमदाबाद"], a: "पोरबंदर" },
+      { q: "सुभाष चंद्र बोस का प्रसिद्ध नारा क्या था?", o: ["जय जवान जय किसान", "तुम मुझे खून दो, मैं तुम्हें आज़ादी दूँगा", "सरफ़रोशी की तमन्ना", "वंदे मातरम"], a: "तुम मुझे खून दो, मैं तुम्हें आज़ादी दूँगा" },
+      { q: "झाँसी की रानी लक्ष्मीबाई ने किस युद्ध में भाग लिया?", o: ["1857", "जलियांवाला बाग", "दांडी मार्च", "भारत छोड़ो"], a: "1857" },
+      { q: "जलियांवाला बाग हत्याकांड कब हुआ?", o: ["1915", "1917", "1919", "1921"], a: "1919" },
+      { q: "दांडी मार्च किस वर्ष हुआ?", o: ["1928", "1930", "1932", "1935"], a: "1930" },
+      { q: "स्वतंत्र भारत के पहले प्रधानमंत्री कौन थे?", o: ["पटेल", "नेहरू", "गांधी", "राजेन्द्र प्रसाद"], a: "नेहरू" },
+      { q: "लोकमान्य तिलक का नारा?", o: ["स्वराज मेरा जन्मसिद्ध अधिकार है", "जय हिंद", "वंदे मातरम", "इनक़लाब ज़िंदाबाद"], a: "स्वराज मेरा जन्मसिद्ध अधिकार है" },
+      { q: "अशफाक उल्ला खान किस संगठन से जुड़े थे?", o: ["HRA", "INA", "INC", "CPI"], a: "HRA" },
+      { q: "INA का पूरा नाम?", o: ["Indian National Army", "Indian National Association", "Indian Naval Alliance", "Indian National Assembly"], a: "Indian National Army" },
+      { q: "काकोरी कांड कब हुआ?", o: ["1923", "1925", "1927", "1930"], a: "1925" },
+      { q: "गदर पार्टी का गठन कहाँ हुआ?", o: ["भारत", "अमेरिका", "इंग्लैंड", "फ्रांस"], a: "अमेरिका" },
+      { q: "किसने 'वंदे मातरम' लिखा?", o: ["बंकिमचंद्र चट्टोपाध्याय", "रवीन्द्रनाथ टैगोर", "सुभाष बोस", "बाल गंगाधर तिलक"], a: "बंकिमचंद्र चट्टोपाध्याय" },
+      { q: "आज़ाद हिंद फ़ौज की स्थापना कहाँ हुई?", o: ["जर्मनी", "जापान", "भारत", "सिंगापुर"], a: "जापान" },
+      { q: "भारत के पहले राष्ट्रपति?", o: ["राजेन्द्र प्रसाद", "नेहरू", "गांधी", "पटेल"], a: "राजेन्द्र प्रसाद" },
+      { q: "साइमन कमीशन कब आया?", o: ["1925", "1928", "1930", "1932"], a: "1928" },
+      { q: "किसे 'पंजाब केसरी' कहा जाता है?", o: ["लाला लाजपत राय", "भगत सिंह", "नेहरू", "गांधी"], a: "लाला लाजपत राय" },
+      { q: "चंपारण सत्याग्रह कब हुआ?", o: ["1915", "1916", "1917", "1918"], a: "1917" },
+      { q: "आजाद हिंद बैंक कहाँ स्थापित हुआ?", o: ["जर्मनी", "जापान", "सिंगापुर", "भारत"], a: "सिंगापुर" },
+      { q: "किसने जलियांवाला बाग हत्याकांड का बदला लिया?", o: ["उधम सिंह", "भगत सिंह", "सुखदेव", "राजगुरु"], a: "उधम सिंह" }
+    ];
+    
+    let index = 0,
+      score = 0;
+    
+    function startQuiz() {
+      index = 0;
+      score = 0;
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("restartBtn").style.display = "none";
+      loadQuestion();
+    }
+    
+    function loadQuestion() {
+      if (index >= quizData.length) {
+        document.getElementById("quizArea").style.display = "none";
+        document.getElementById("result").innerHTML = `Quiz Over! आपका स्कोर: ${score}/${quizData.length}`;
+        document.getElementById("restartBtn").style.display = "inline-block";
+        return;
+      }
+      document.getElementById("quizArea").style.display = "block";
+      const qObj = quizData[index];
+      document.getElementById("quizQuestion").innerText = `Q${index+1}: ${qObj.q}`;
+      const optionsDiv = document.getElementById("quizOptions");
+      optionsDiv.innerHTML = "";
+      qObj.o.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "quiz-option";
+        div.innerText = opt;
+        div.onclick = () => checkAnswer(div, qObj.a);
+        optionsDiv.appendChild(div);
+      });
+    }
+    
+    function checkAnswer(selected, correct) {
+      const options = document.querySelectorAll(".quiz-option");
+      options.forEach(opt => {
+        opt.onclick = null;
+        if (opt.innerText === correct) { opt.classList.add("correct"); }
+        else if (opt === selected) { opt.classList.add("wrong"); }
+      });
+      if (selected.innerText === correct) score++;
+      setTimeout(() => { index++;
+        loadQuestion(); }, 2000);
+    }
+    startQuiz();
+  </script>
+</body>
+
+</html>
